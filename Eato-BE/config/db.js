@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
   try {
     const uri = process.env.MONGO_URI;
-    console.log("111111")
     if (!uri) {
       console.error('MONGO_URI not set in .env');
       process.exit(1);

@@ -2,6 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 
+//Added after Frontend code for connection
+const cors = require('cors');
+
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorMiddleware');
 
@@ -15,6 +18,11 @@ const app = express();
 // Middleware
 app.use(express.json()); // parse JSON bodies
 app.use(morgan('dev'));  // request logging in dev
+
+//Added after Frontend code for connection
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
 
 // Connect DB
 connectDB();

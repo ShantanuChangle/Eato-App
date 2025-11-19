@@ -6,6 +6,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Orders from './pages/Orders';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
+import AdminAddRestaurant from './pages/AdminAddRestaurant';
+import AdminAddMenuItem from './pages/AdminAddMenuItem';
 
 function App() {
   return (
@@ -17,6 +20,23 @@ function App() {
           <Route path="/restaurant/:id" element={<RestaurantDetails />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route
+              path="/admin/restaurants/new"
+              element={
+                <AdminRoute>
+                  <AdminAddRestaurant />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/menu/new"
+              element={
+                <AdminRoute>
+                  <AdminAddMenuItem />
+                </AdminRoute>
+              }
+            />
+
           
           {/* Protected routes */}
           <Route

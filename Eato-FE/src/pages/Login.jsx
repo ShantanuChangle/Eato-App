@@ -29,7 +29,7 @@ function Login() {
         data: form,
       });
 
-      const userData = { _id: data._id, name: data.name, email: data.email };
+      const userData = { _id: data._id, name: data.name, email: data.email, isAdmin: data.isAdmin };
       login(userData, data.token);
 
       navigate('/');
@@ -40,12 +40,14 @@ function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    
+    <div style={{position:'absolute', backgroundColor:'black', left:'33vw', top:'35vh', display:'grid', justifyItems:'center', border:'solid', paddingBottom:'7vh', width:'35vw', height:'20vh', borderRadius:'10px'}}>
+      <h2 style={{color:'white'}}>Login</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '300px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width:'80vw', maxWidth: '300px' }}>
         <input
+          style={{padding:'0.5vh'}}
           type="email"
           name="email"
           placeholder="Email"
@@ -54,6 +56,7 @@ function Login() {
           required
         />
         <input
+          style={{padding:'0.5vh'}}
           type="password"
           name="password"
           placeholder="Password"
@@ -61,9 +64,10 @@ function Login() {
           onChange={handleChange}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit" style={{backgroundColor:'orange', padding:'0.7vh', fontWeight:'800',cursor:'pointer', borderRadius:'10px', fontSize:'15px'}}>Login</button>
       </form>
     </div>
+
   );
 }
 

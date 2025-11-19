@@ -6,7 +6,7 @@ function RestaurantCard({ restaurant }) {
       <h3>{restaurant.name}</h3>
       <p>{restaurant.address}</p>
       <p>Cuisine: {restaurant.cuisine}</p>
-      <Link to={`/restaurant/${restaurant._id}`}>View Menu</Link>
+      <Link to={`/restaurant/${restaurant._id}`} style={{color:'white'}}>View Menu</Link>
     </div>
   );
 }

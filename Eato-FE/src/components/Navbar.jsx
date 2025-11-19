@@ -16,11 +16,12 @@ function Navbar() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '0.75rem 1rem',
-        borderBottom: '1px solid #ddd',
+        padding: '1rem 1rem',
+        borderBottom: '1px solid #111',
         marginBottom: '1rem',
-        backgroundColor:'black',
-        position:'sticky'
+        backgroundColor:'grey',
+        position:'sticky',
+        borderRadius:'10px'
       }}
     >
       <div>
@@ -28,15 +29,17 @@ function Navbar() {
           Eato
         </Link>
       </div>
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-        <Link to="/" style={{ color:'white', textDecoration:'none' }}>Home</Link>
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        <Link to="/" style={{ color:'white', textDecoration:'none', fontFamily:'sans-serif' }}>Home</Link>
         {user && <Link to="/orders" style={{ color:'white', textDecoration:'none' }}>My Orders</Link>}
+        {user?.isAdmin && <Link to="/admin/restaurants/new" style={{ color:'white', textDecoration:'none' }}>Add Restaurants</Link>}
+        {user?.isAdmin && <Link to="/admin/menu/new" style={{ color:'white', textDecoration:'none' }}>Add Menu Items</Link>}
         {!user && <Link to="/login" style={{ color:'white', textDecoration:'none' }}>Login</Link>}
         {!user && <Link to="/register" style={{ color:'white', textDecoration:'none' }}>Register</Link>}
         {user && (
           <>
             <span style={{ fontSize: '0.9rem', color:'white' }}>Hi, {user.name}</span>
-            <button style={{borderRadius:'45%', padding:'10px', backgroundColor:'white'}} onClick={handleLogout}>Logout</button>
+            <button style={{borderRadius:'45%', padding:'10px', backgroundColor:'orange', bordercol:'white'}} onClick={handleLogout}>Logout</button>
           </>
         )}
       </div>

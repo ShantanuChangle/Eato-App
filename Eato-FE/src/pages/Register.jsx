@@ -30,7 +30,7 @@ function Register() {
       });
 
       // backend returns { _id, name, email, token }
-      const userData = { _id: data._id, name: data.name, email: data.email };
+      const userData = { _id: data._id, name: data.name, email: data.email, isAdmin: data.isAdmin };
       login(userData, data.token);
 
       navigate('/');
@@ -41,12 +41,13 @@ function Register() {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
+    <div style={{position:'absolute', backgroundColor:'black', left:'33vw', top:'35vh', display:'grid', justifyItems:'center', border:'solid', paddingBottom:'8vh', width:'35vw', height:'23vh', borderRadius:'10px'}}>
+      <h2 style={{color:'white'}}>Register</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '300px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem',width:'80vw', maxWidth: '300px' }}>
         <input
+          style={{padding:'0.5vh'}}
           type="text"
           name="name"
           placeholder="Name"
@@ -55,6 +56,7 @@ function Register() {
           required
         />
         <input
+          style={{padding:'0.5vh'}}
           type="email"
           name="email"
           placeholder="Email"
@@ -63,6 +65,7 @@ function Register() {
           required
         />
         <input
+          style={{padding:'0.5vh'}}
           type="password"
           name="password"
           placeholder="Password"
@@ -70,7 +73,7 @@ function Register() {
           onChange={handleChange}
           required
         />
-        <button type="submit">Create Account</button>
+        <button type="submit" style={{backgroundColor:'orange', padding:'0.7vh', fontWeight:'800',cursor:'pointer', borderRadius:'10px'}}>Create Account</button>
       </form>
     </div>
   );

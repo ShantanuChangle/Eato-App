@@ -21,6 +21,7 @@ function Navbar() {
         marginBottom: '1rem',
         backgroundColor:'grey',
         position:'sticky',
+        top:'1rem',
         borderRadius:'10px'
       }}
     >

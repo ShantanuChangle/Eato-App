@@ -40,4 +40,30 @@ const getUserOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
-module.exports = { placeOrder, getUserOrders };
+
+// ✅ NEW: delete order for the logged-in user
+// @desc    Delete an order
+// @route   DELETE /api/orders/:id
+// @access  Private (user can delete only own order)
+const deleteOrder = asyncHandler(async (req, res) => {
+  const orderId = req.params.id;
+
+  const order = await Order.findById(orderId);
+
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  // make sure this order belongs to the logged-in user
+  if (order.user.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error('You can only delete your own orders');
+  }
+
+  await order.deleteOne();
+
+  res.json({ message: 'Order removed' });
+});
+
+module.exports = { placeOrder, getUserOrders, deleteOrder };

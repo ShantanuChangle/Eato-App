@@ -77,7 +77,7 @@ function AdminAddMenuItem() {
   };
 
   return (
-    <div style={{position:'absolute', backgroundColor:'black', left:'33vw', top:'35vh', display:'grid', justifyItems:'center', border:'solid', paddingBottom:'9vh', width:'35vw', height:'31vh', borderRadius:'10px'}} >
+    <div style={{position:'relative', backgroundColor:'black', left:'13vw', display:'grid', justifyItems:'center', border:'solid', paddingBottom:'9vh', width:'35vw', height:'31vh', borderRadius:'10px'}} >
       <h2>Add Menu Item (Admin)</h2>
 
       {loadingRestaurants && <p>Loading restaurants...</p>}

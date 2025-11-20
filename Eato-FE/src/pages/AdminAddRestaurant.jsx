@@ -34,7 +34,7 @@ function AdminAddRestaurant() {
   };
 
   return (
-    <div style={{position:'absolute', backgroundColor:'black', left:'33vw', top:'35vh', display:'grid', justifyItems:'center', border:'solid', paddingBottom:'5vh', width:'35vw', height:'31vh', borderRadius:'10px'}}>
+    <div style={{position:'relative', backgroundColor:'black', left:'13vw', display:'grid', justifyItems:'center', border:'solid', paddingBottom:'5vh', width:'35vw', height:'31vh', borderRadius:'10px'}}>
       <h2>Add Restaurant (Admin)</h2>
       {message && <p style={{ color: 'green' }}>{message}</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}

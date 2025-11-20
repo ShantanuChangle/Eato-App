@@ -41,7 +41,7 @@ function Register() {
   };
 
   return (
-    <div style={{position:'absolute', backgroundColor:'black', left:'33vw', top:'35vh', display:'grid', justifyItems:'center', border:'solid', paddingBottom:'8vh', width:'35vw', height:'23vh', borderRadius:'10px'}}>
+    <div style={{position:'relative', backgroundColor:'black', left:'13vw', display:'grid', justifyItems:'center', border:'solid', paddingBottom:'8vh', width:'35vw', height:'23vh', borderRadius:'10px'}}>
       <h2 style={{color:'white'}}>Register</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
 

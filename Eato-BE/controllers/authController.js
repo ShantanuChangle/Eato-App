@@ -5,8 +5,13 @@ const User = require('../models/userModel');
 
 // helper: generate token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: '30d',
+  });
 };
+
+module.exports = generateToken;
+
 
 // @desc Register user
 // @route POST /api/auth/register

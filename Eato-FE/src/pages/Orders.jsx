@@ -13,7 +13,7 @@ function Orders() {
   const [confirmingOrderId, setConfirmingOrderId] = useState(null);
   const [otpInput, setOtpInput] = useState('');
 
-  // 1) Load user's orders
+  // 1) Load user's orders on mount
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -33,7 +33,7 @@ function Orders() {
     fetchOrders();
   }, [request]);
 
-  // 2) Delete an order
+  // 2) Delete / cancel an order (only allowed for non-delivered)
   const handleDeleteOrder = async (orderId) => {
     setActionMessage('');
     setError('');
@@ -57,7 +57,7 @@ function Orders() {
     }
   };
 
-  // 3) Start OTP confirmation for a specific order
+  // 3) Start OTP confirmation UI for a specific order
   const handleStartConfirmDelivery = (orderId) => {
     setError('');
     setActionMessage('');
@@ -65,7 +65,7 @@ function Orders() {
     setOtpInput('');
   };
 
-  // 4) Submit OTP to backend
+  // 4) Submit OTP to backend and then refetch fresh orders
   const handleSubmitOtp = async (orderId) => {
     if (!otpInput.trim()) {
       setError('Please enter OTP');
@@ -76,17 +76,20 @@ function Orders() {
     setActionMessage('');
 
     try {
-      const updatedOrder = await request({
+      // Confirm delivery on backend
+      await request({
         url: `/api/orders/${orderId}/confirm-delivery`,
         method: 'POST',
         data: { otp: otpInput.trim() },
       });
 
-      // update single order in local state
-      setOrders((prev) =>
-        prev.map((o) => (o._id === orderId ? updatedOrder : o))
-      );
+      // Refetch all orders so we have updated status and populated fields
+      const freshOrders = await request({
+        url: '/api/orders/myorders',
+        method: 'GET',
+      });
 
+      setOrders(freshOrders);
       setActionMessage('Delivery confirmed successfully');
       setConfirmingOrderId(null);
       setOtpInput('');
@@ -103,13 +106,12 @@ function Orders() {
     return <p>No orders yet.</p>;
   }
 
-  // 5) Total amount of all orders
-  const totalAmount = orders.reduce(
-    (sum, order) => sum + (order.totalPrice || 0),
-    0
-  );
+  // 5) Total amount of ACTIVE (non-delivered) orders
+  const totalAmount = orders
+    .filter((order) => !order.isDeliveredConfirmed && order.status !== 'delivered')
+    .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
 
-  // display status helper
+  // Helper: display status text
   const getDisplayStatus = (order) => {
     if (order.isDeliveredConfirmed || order.status === 'delivered') {
       return 'Delivered';
@@ -153,16 +155,18 @@ function Orders() {
             ))}
           </ul>
 
-          {/* Remove order button */}
-          <button
-            style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px', cursor:'pointer', fontWeight:'500'}}
-            onClick={() => handleDeleteOrder(order._id)}
-            disabled={deletingId === order._id}
-          >
-            {deletingId === order._id ? 'Removing...' : 'Cancel Order'}
-          </button>
+          {/* Cancel/Remove only if NOT delivered */}
+          {!order.isDeliveredConfirmed && order.status !== 'delivered' && (
+            <button
+              style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px', fontWeight:'400'}}
+              onClick={() => handleDeleteOrder(order._id)}
+              disabled={deletingId === order._id}
+            >
+              {deletingId === order._id ? 'Cancelling...' : 'Cancel Order'}
+            </button>
+          )}
 
-          {/* OTP confirmation section for undelivered orders */}
+          {/* OTP confirmation section only for NOT delivered orders */}
           {!order.isDeliveredConfirmed && order.status !== 'delivered' && (
             <div style={{ marginTop: '0.5rem' }}>
               {confirmingOrderId === order._id ? (
@@ -180,12 +184,16 @@ function Orders() {
                     value={otpInput}
                     onChange={(e) => setOtpInput(e.target.value)}
                   />
-                  <button style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px', cursor:'pointer', fontWeight:'500'}} onClick={() => handleSubmitOtp(order._id)}>
+                  <button 
+                    style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px'}}
+                    onClick={() => handleSubmitOtp(order._id)}>
                     Submit OTP
                   </button>
                 </div>
               ) : (
-                <button style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px', cursor:'pointer', fontWeight:'500'}} onClick={() => handleStartConfirmDelivery(order._id)}>
+                <button 
+                style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px'}}
+                onClick={() => handleStartConfirmDelivery(order._id)}>
                   Confirm Delivery (Enter OTP)
                 </button>
               )}
@@ -194,7 +202,7 @@ function Orders() {
         </div>
       ))}
 
-      {/* Total sum section */}
+      {/* Bottom summary: only active orders counted */}
       <div
         style={{
           marginTop: '1rem',
@@ -206,7 +214,7 @@ function Orders() {
         }}
       >
         <div>
-          <strong>Total price of all orders:</strong> ₹{totalAmount}
+          <strong>Total price of active orders:</strong> ₹{totalAmount}
         </div>
       </div>
     </div>

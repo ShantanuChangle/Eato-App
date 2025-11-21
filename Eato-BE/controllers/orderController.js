@@ -10,12 +10,10 @@ const generateOtp = () => {
 
 // place order
 const placeOrder = asyncHandler(async (req, res) => {
-  console.log('1) placeOrder START, user:', req.user && req.user.email);
 
   const { restaurant, items } = req.body;
 
   if (!restaurant || !items || !items.length) {
-    console.log('2) Invalid order payload');
     res.status(400);
     throw new Error('Order must have restaurant and items');
   }
@@ -26,7 +24,6 @@ const placeOrder = asyncHandler(async (req, res) => {
   for (const it of items) {
     const menu = await MenuItem.findById(it.menuItem);
     if (!menu) {
-      console.log('3) Menu item not found for id:', it.menuItem);
       res.status(400);
       throw new Error('Menu item not found');
     }
@@ -40,7 +37,6 @@ const placeOrder = asyncHandler(async (req, res) => {
   const otp = generateOtp();
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
-  console.log('4) Creating order in DB...');
   const order = await Order.create({
     user: req.user._id,
     restaurant,
@@ -50,14 +46,10 @@ const placeOrder = asyncHandler(async (req, res) => {
     deliveryOtp: otp,
     deliveryOtpExpiresAt: expiresAt,
   });
-  console.log('5) Order created:', order._id.toString());
-  console.log('5.1) OTP for this order:', otp);
 
   // Send OTP email
   if (req.user && req.user.email) {
-    console.log('6) About to send OTP email to:', req.user.email);
     await sendDeliveryOtpEmail(req.user.email, otp, order._id.toString());
-    console.log('7) sendDeliveryOtpEmail FINISHED for:', req.user.email);
   } else {
     console.log('6) req.user.email NOT FOUND, skipping email send');
   }

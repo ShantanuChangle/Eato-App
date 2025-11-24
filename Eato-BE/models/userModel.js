@@ -5,6 +5,7 @@ const userSchema = mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true }, // hashed
   isAdmin: { type: Boolean, default: false }, // Added for Admin Functionality
+  isDeliveryPerson: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

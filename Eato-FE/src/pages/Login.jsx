@@ -29,7 +29,7 @@ function Login() {
         data: form,
       });
 
-      const userData = { _id: data._id, name: data.name, email: data.email, isAdmin: data.isAdmin };
+      const userData = { _id: data._id, name: data.name, email: data.email, isAdmin: data.isAdmin, isDeliveryPerson: data.isDeliveryPerson };
       login(userData, data.token);
 
       navigate('/');

@@ -24,6 +24,8 @@ import Apps from './pages/Apps';
 import Privacy from './pages/Privacy';
 import Security from './pages/Security';
 import Terms from './pages/Terms';
+import DeliveryOrders from './pages/DeliveryOrders';
+import DeliveryRoute from './components/DeliveryRoute';
 
 function App() {
   return (
@@ -49,6 +51,14 @@ function App() {
                 <AdminRoute>
                   <AdminAddMenuItem />
                 </AdminRoute>
+              }
+            />
+            <Route
+              path="/delivery/orders"
+              element={
+                <DeliveryRoute>
+                  <DeliveryOrders />
+                </DeliveryRoute>
               }
             />
 

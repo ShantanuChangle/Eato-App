@@ -31,7 +31,7 @@ function Home() {
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   if (restaurants.length === 0) {
-    return <p>No restaurants yet. Add some via backend / seed script.</p>;
+    return <p>No restaurants Listed Yet.</p>;
   }
 
   return (

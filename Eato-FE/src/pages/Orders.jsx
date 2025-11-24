@@ -107,9 +107,13 @@ function Orders() {
   }
 
   // 5) Total amount of ACTIVE (non-delivered) orders
+  // const totalAmount = orders
+  //   .filter((order) => !order.isDeliveredConfirmed && order.status !== 'delivered')
+  //   .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+
   const totalAmount = orders
-    .filter((order) => !order.isDeliveredConfirmed && order.status !== 'delivered')
-    .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+  .filter((order) => order.status === 'placed')
+  .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
 
   // Helper: display status text
   const getDisplayStatus = (order) => {
@@ -156,7 +160,7 @@ function Orders() {
           </ul>
 
           {/* Cancel/Remove only if NOT delivered */}
-          {!order.isDeliveredConfirmed && order.status !== 'delivered' && (
+          {/* {!order.isDeliveredConfirmed && order.status !== 'delivered' && (
             <button
               style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px', fontWeight:'400'}}
               onClick={() => handleDeleteOrder(order._id)}
@@ -164,40 +168,16 @@ function Orders() {
             >
               {deletingId === order._id ? 'Cancelling...' : 'Cancel Order'}
             </button>
-          )}
+          )} */}
 
-          {/* OTP confirmation section only for NOT delivered orders */}
-          {!order.isDeliveredConfirmed && order.status !== 'delivered' && (
-            <div style={{ marginTop: '0.5rem' }}>
-              {confirmingOrderId === order._id ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '0.5rem',
-                    alignItems: 'center',
-                    marginTop: '0.25rem',
-                  }}
-                >
-                  <input
-                    type="text"
-                    placeholder="Enter OTP from email"
-                    value={otpInput}
-                    onChange={(e) => setOtpInput(e.target.value)}
-                  />
-                  <button 
-                    style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px'}}
-                    onClick={() => handleSubmitOtp(order._id)}>
-                    Submit OTP
-                  </button>
-                </div>
-              ) : (
-                <button 
-                style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px'}}
-                onClick={() => handleStartConfirmDelivery(order._id)}>
-                  Confirm Delivery (Enter OTP)
-                </button>
-              )}
-            </div>
+          {order.status === 'placed' && !order.isDeliveredConfirmed && (
+            <button
+              style={{backgroundColor:'orange', borderColor:'orange', borderRadius:'20px', fontWeight:'400'}}
+              onClick={() => handleDeleteOrder(order._id)}
+              disabled={deletingId === order._id}
+            >
+              {deletingId === order._id ? 'Cancelling...' : 'Cancel Order'}
+            </button>
           )}
         </div>
       ))}

@@ -14,9 +14,12 @@ const orderSchema = mongoose.Schema(
     totalPrice: { type: Number, required: true, default: 0 },
     status: {
       type: String,
-      enum: ['placed', 'preparing', 'on_the_way', 'delivered', 'cancelled'],
+      enum: ['placed', 'accepted', 'preparing', 'on_the_way', 'delivered', 'cancelled'],
       default: 'placed',
     },
+
+    // Added for delivery person
+    deliveryPerson: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 
     deliveryOtp: { type: String },
     deliveryOtpExpiresAt: { type: Date },

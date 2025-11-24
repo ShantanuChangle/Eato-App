@@ -5,7 +5,7 @@ function MenuItemCard({ item, onOrder }) {
       <p>{item.description}</p>
       <p>Price: ₹{item.price}</p>
       <p>{item.isVeg ? 'Veg' : 'Non-veg'}</p>
-      <button onClick={() => onOrder(item)} style={{backgroundColor:'orange', padding:'0.5rem', borderRadius:'10px',position:'absolute', right:'1rem', bottom:'1rem'}}>Order</button>
+      <button onClick={() => onOrder(item)} style={{backgroundColor:'orange', padding:'0.5rem', borderRadius:'10px',position:'absolute', right:'1rem', bottom:'1rem', cursor:"pointer"}}>Order</button>
     </div>
   );
 }

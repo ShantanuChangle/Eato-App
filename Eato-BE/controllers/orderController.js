@@ -64,6 +64,7 @@ const getUserOrders = asyncHandler(async (req, res) => {
   res.json(orders);
 });
 
+// Confirm delivery via OTP (done by delivery person)
 const confirmDelivery = asyncHandler(async (req, res) => {
   const orderId = req.params.id;
   const { otp } = req.body;
@@ -79,10 +80,10 @@ const confirmDelivery = asyncHandler(async (req, res) => {
     throw new Error('Order not found');
   }
 
-  // make sure this order belongs to logged-in user
-  if (order.user.toString() !== req.user._id.toString()) {
+  // ensure this order belongs to the current delivery person
+  if (!order.deliveryPerson || order.deliveryPerson.toString() !== req.user._id.toString()) {
     res.status(403);
-    throw new Error('You can only confirm your own orders');
+    throw new Error('You can only confirm delivery for orders assigned to you');
   }
 
   if (!order.deliveryOtp || !order.deliveryOtpExpiresAt) {
@@ -137,4 +138,58 @@ const deleteOrder = asyncHandler(async (req, res) => {
   res.json({ message: 'Order removed' });
 });
 
-module.exports = { placeOrder, getUserOrders, deleteOrder, confirmDelivery };
+// Get orders available for delivery persons to accept
+// Orders that are placed, not yet assigned to any delivery person
+const getAvailableDeliveryOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({
+    status: 'placed',
+    deliveryPerson: null,
+  })
+    .populate('restaurant', 'name')
+    .populate('user', 'name email');
+
+  res.json(orders);
+});
+
+// Get orders assigned to current delivery person
+const getMyDeliveryOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({
+    deliveryPerson: req.user._id,
+  })
+    .populate('restaurant', 'name')
+    .populate('user', 'name email');
+
+  res.json(orders);
+});
+
+// Delivery person accepts an order
+const acceptOrder = asyncHandler(async (req, res) => {
+  const orderId = req.params.id;
+
+  const order = await Order.findById(orderId);
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+
+  // Order already taken by someone else?
+  if (order.deliveryPerson) {
+    res.status(400);
+    throw new Error('Order already accepted by another delivery person');
+  }
+
+  // Only allow accepting if it's still placed
+  if (order.status !== 'placed') {
+    res.status(400);
+    throw new Error('Order is not in a state to be accepted');
+  }
+
+  order.deliveryPerson = req.user._id;
+  order.status = 'accepted';
+
+  const updatedOrder = await order.save();
+
+  res.json(updatedOrder);
+});
+
+module.exports = { placeOrder, getUserOrders, deleteOrder, confirmDelivery, getAvailableDeliveryOrders, getMyDeliveryOrders, acceptOrder };

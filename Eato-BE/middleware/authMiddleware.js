@@ -41,4 +41,12 @@ const admin = (req, res, next) => {
   throw new Error('Admin access required');
 };
 
-module.exports = { protect, admin };
+const delivery = (req, res, next) => {
+  if (req.user && req.user.isDeliveryPerson) {
+    return next();
+  }
+  res.status(403);
+  throw new Error('Delivery access required');
+};
+
+module.exports = { protect, admin, delivery };

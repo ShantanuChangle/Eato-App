@@ -32,9 +32,10 @@ function Navbar() {
       </div>
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
         <Link to="/" style={{ color:'white', textDecoration:'none', fontFamily:'sans-serif' }}>Home</Link>
-        {user && <Link to="/orders" style={{ color:'white', textDecoration:'none' }}>My Orders</Link>}
+        {user && !user.isDeliveryPerson && <Link to="/orders" style={{ color:'white', textDecoration:'none' }}>My Orders</Link>}
         {user?.isAdmin && <Link to="/admin/restaurants/new" style={{ color:'white', textDecoration:'none' }}>Add Restaurants</Link>}
         {user?.isAdmin && <Link to="/admin/menu/new" style={{ color:'white', textDecoration:'none' }}>Add Menu Items</Link>}
+        {user?.isDeliveryPerson && <Link to="/delivery/orders" style={{ color:'white', textDecoration:'none' }}>Delivery Dashboard</Link>}
         {!user && <Link to="/login" style={{ color:'white', textDecoration:'none' }}>Login</Link>}
         {!user && <Link to="/register" style={{ color:'white', textDecoration:'none' }}>Register</Link>}
         {user && (

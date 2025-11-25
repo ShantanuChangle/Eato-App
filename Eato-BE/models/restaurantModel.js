@@ -5,6 +5,8 @@ const restaurantSchema = mongoose.Schema({
   address: { type: String },
   cuisine: { type: String },
   rating: { type: Number, default: 0 },
+  averageRating: { type: Number, default: 0 },
+  numReviews: { type: Number, default: 0 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);

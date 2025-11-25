@@ -9,6 +9,10 @@ function Orders() {
   const [actionMessage, setActionMessage] = useState('');
   const [deletingId, setDeletingId] = useState(null);
 
+  const [reviewingOrderId, setReviewingOrderId] = useState(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+
   // OTP confirmation state
   const [confirmingOrderId, setConfirmingOrderId] = useState(null);
   const [otpInput, setOtpInput] = useState('');
@@ -56,6 +60,48 @@ function Orders() {
       setDeletingId(null);
     }
   };
+
+  // start writing review for an order
+const handleStartReview = (orderId) => {
+  setError('');
+  setActionMessage('');
+  setReviewingOrderId(orderId);
+  setReviewRating(5);
+  setReviewComment('');
+};
+
+// submit review
+const handleSubmitReview = async (order) => {
+  if (!reviewRating) {
+    setError('Please select a rating');
+    return;
+  }
+
+  try {
+    setError('');
+    setActionMessage('');
+
+    await request({
+      url: '/api/reviews',
+      method: 'POST',
+      data: {
+        restaurantId: order.restaurant._id,
+        orderId: order._id,
+        rating: reviewRating,
+        comment: reviewComment,
+      },
+    });
+
+    setActionMessage('Thank you! Your review has been submitted.');
+    setReviewingOrderId(null);
+    setReviewRating(5);
+    setReviewComment('');
+  } catch (err) {
+    const msg = err?.response?.data?.message || 'Failed to submit review';
+    setError(msg);
+  }
+};
+
 
   // 3) Start OTP confirmation UI for a specific order
   const handleStartConfirmDelivery = (orderId) => {
@@ -158,6 +204,68 @@ function Orders() {
               </li>
             ))}
           </ul>
+
+          {order.isDeliveredConfirmed || order.status === 'delivered' ? (
+            <div style={{ marginTop: '0.5rem' }}>
+              {reviewingOrderId === order._id ? (
+                <div
+                  style={{
+                    borderTop: '1px solid #ddd',
+                    marginTop: '0.5rem',
+                    paddingTop: '0.5rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <div>
+                    <label>
+                      Rating:{' '}
+                      <select
+                        style={{backgroundColor:'orange', padding:'2px', borderRadius:'20px'}}
+                        value={reviewRating}
+                        onChange={(e) => setReviewRating(Number(e.target.value))}
+                      >
+                        <option value={5}>5 - Excellent</option>
+                        <option value={4}>4 - Good</option>
+                        <option value={3}>3 - Average</option>
+                        <option value={2}>2 - Poor</option>
+                        <option value={1}>1 - Terrible</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div>
+                    <textarea
+                      rows={3}
+                      placeholder="Write your experience"
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      style={{ width: '100%', backgroundColor:'#eee5e51d', color:'white' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button 
+                    style={{backgroundColor:'orange', padding:'5px', borderRadius:'20px'}}
+                    onClick={() => handleSubmitReview(order)}>
+                      Submit Review
+                    </button>
+                    <button 
+                    style={{backgroundColor:'orange', padding:'5px 10px', borderRadius:'20px'}}
+                    onClick={() => setReviewingOrderId(null)}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button 
+                style={{backgroundColor:'orange', padding:'5px 10px', borderRadius:'20px'}}
+                onClick={() => handleStartReview(order._id)}>
+                  Write Review
+                </button>
+              )}
+            </div>
+          ) : null}
+
 
           {/* Cancel/Remove only if NOT delivered */}
           {/* {!order.isDeliveredConfirmed && order.status !== 'delivered' && (
